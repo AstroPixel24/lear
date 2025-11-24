@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>King Lear Madness Analyzer · Linguistic Model</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    .nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.nav-left {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(148, 163, 184, 0.9);
+}
+
+.nav-links {
+  display: flex;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-muted);
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-links a:hover {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(148, 163, 184, 0.65);
+  color: var(--text-main);
+}
+
+.nav-links a.active {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(148, 163, 184, 0.8);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+    :root {
+      --bg: #020617;
+      --bg-card: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --accent-pink: #fb7185;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+        
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.18) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(248, 113, 113, 0.16) 0, transparent 55%),
+        #020617;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1120px;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9) 0, #020617 45%);
+      border-radius: 26px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 22px 22px 26px;
+      box-shadow:
+        0 22px 55px rgba(15, 23, 42, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.7);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.14) 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(248, 113, 113, 0.14) 0, transparent 55%);
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px 4px 5px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--text-muted);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .eyebrow-orb {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background:
+        conic-gradient(from 210deg, #38bdf8, #fb7185, #22c55e, #38bdf8);
+      padding: 2px;
+      box-shadow:
+        0 0 14px rgba(56, 189, 248, 0.8),
+        0 0 24px rgba(15, 23, 42, 1);
+    }
+
+    .eyebrow-orb-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      background: radial-gradient(circle at 30% 20%, #ffffff 0, #0f172a 55%, #020617 100%);
+    }
+
+    h1 {
+        
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      margin-bottom: 4px;
+    }
+
+        .glow-title {
+    font-size: clamp(2rem, 4.4vw, 2.7rem);
+    line-height: 1.05;
+    letter-spacing: -0.06em;
+    text-transform: uppercase;
+    background: linear-gradient(120deg, #38bdf8, #fb7185, #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow:
+        0 0 18px rgba(56, 189, 248, 0.55),
+        0 0 30px rgba(15, 23, 42, 0.9);
+    margin-bottom: 4px;
+    }
+
+    .glow-subtitle-tag {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(148, 163, 184, 0.9);
+    margin-top: 2px;
+    margin-bottom: 4px;
+    }
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  max-width: 700px;   /* keeps it from being super wide */
+  margin: 0 auto;     /* centers the block itself */
+}
+
+
+    .subtitle b {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 880px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.96) 0, #020617 55%);
+      border-radius: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      padding: 15px 15px 18px;
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.8);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--text-muted);
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .selectors {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .select-wrapper {
+      position: relative;
+      flex: 1 1 140px;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      appearance: none;
+    }
+
+    .select-wrapper::after {
+      content: "▾";
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-52%);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .scene-container-wrapper {
+      position: relative;
+      margin-top: 6px;
+    }
+
+    .scene-label-bar {
+      position: absolute;
+      right: 10px;
+      top: 6px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(148, 163, 184, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      pointer-events: none;
+    }
+
+    /* Your main scene text box */
+    .scene-container {
+    margin-top: 4px;
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.55);
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.96), #020617),
+        #020617;
+    max-height: 650px;   /* bigger box */
+    min-height: 380px;   /* keeps it tall even for short scenes */
+    overflow: auto;
+    padding: 26px 12px 10px;
+    font-family: "Iowan Old Style", "Georgia", "Times New Roman", serif;
+    font-size: 0.96rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    cursor: text;
+    position: relative;
+    }
+
+    /* Each line in the scene (no numbers now) */
+    .scene-line {
+    white-space: pre-wrap;
+    margin-bottom: 2px;
+    }
+
+    /* Character name highlighting – for ALL CAPS names */
+    .char-lear      { color: #fb7185; font-weight: 600; }
+    .char-cordelia  { color: #38bdf8; font-weight: 600; }
+    .char-goneril   { color: #facc15; font-weight: 600; }
+    .char-regan     { color: #a3e635; font-weight: 600; }
+    .char-kent      { color: #c4b5fd; font-weight: 600; }
+    .char-gloucester{ color: #f97316; font-weight: 600; }
+    .char-edgar     { color: #22c55e; font-weight: 600; }
+    .char-edmund    { color: #e879f9; font-weight: 600; }
+    .char-fool      { color: #67e8f9; font-weight: 600; }
+    .char-albany    { color: #fbbf24; font-weight: 600; }
+    .char-cornwall  { color: #60a5fa; font-weight: 600; }
+    .char-oswald    { color: #f9a8d4; font-weight: 600; }
+    .char-france    { color: #2dd4bf; font-weight: 600; }
+    .char-burgundy  { color: #f87171; font-weight: 600; }
+
+
+    .helper {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .button-row {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      background:
+        radial-gradient(circle at 0 0, #38bdf8 0, #0ea5e9 50%, #0369a1 100%);
+      color: #0b1120;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(8, 47, 73, 0.8);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease;
+    }
+
+    button.secondary {
+      background: radial-gradient(circle at 0 0, rgba(148, 163, 184, 0.35) 0, #111827 80%);
+      color: var(--text-main);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.8);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+      box-shadow: 0 18px 40px rgba(8, 47, 73, 0.95);
+    }
+
+    button.secondary:hover {
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.9);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 22px rgba(8, 47, 73, 0.7);
+    }
+
+    .results-score {
+      font-size: 2.35rem;
+      font-weight: 700;
+      letter-spacing: -0.05em;
+    }
+
+    .score-label {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .score-comment {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .feature-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .feature-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), #020617);
+      border-radius: 14px;
+      border: 1px solid rgba(30, 64, 175, 0.9);
+      padding: 8px 10px 9px;
+    }
+
+    .feature-name {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+
+    /* 👇 make long labels wrap nicely */
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    }
+
+
+    .feature-value {
+      font-size: 1.06rem;
+      font-weight: 600;
+    }
+
+    .feature-caption {
+      margin-top: 4px;
+      font-size: 0.74rem;
+      color: rgba(156, 163, 175, 0.9);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+    <div class="eyebrow">
+        <span class="eyebrow-orb"><span class="eyebrow-orb-inner"></span></span>
+        <span>Lear Linguistic Model · LLM</span>
+    </div>
+    <div class="glow-subtitle-tag">computational stylistics for king lear</div>
+    <h1 class="glow-title">Lear Linguistic Model (LLM)</h1>
+    <p class="subtitle">
+        The <b>Lear Linguistic Model (LLM)</b> is a computational linguistics tool that
+        scores how “mad” a passage feels in <i>King Lear</i>, based on patterns in coherence,
+        imagery, and diction, and summarizes that as a Madness Score with three stylistic
+        dimensions.
+    </p>
+    </header>
+
+        <nav class="nav">
+      <div class="nav-links">
+        <a href="index.html" class="active">Analyzer</a>
+        <a href="about.html">About</a>
+      </div>
+    </nav>
+
+    <div class="layout">
+      <!-- LEFT: input -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">1 · Choose Act & Scene, then highlight text</div>
+          <span class="badge">Input</span>
+        </div>
+
+        <div class="selectors">
+          <div class="select-wrapper">
+            <label for="actSelect">Act</label>
+            <select id="actSelect">
+              <option value="1">Act 1</option>
+              <option value="2">Act 2</option>
+              <option value="3" selected>Act 3</option>
+              <option value="4">Act 4</option>
+              <option value="5">Act 5</option>
+            </select>
+          </div>
+          <div class="select-wrapper">
+            <label for="sceneSelect">Scene</label>
+            <select id="sceneSelect">
+              <option value="1">Scene 1</option>
+              <option value="2">Scene 2</option>
+              <option value="3">Scene 3</option>
+              <option value="4" selected>Scene 4</option>
+              <option value="5">Scene 5</option>
+              <option value="6">Scene 6</option>
+              <option value="7">Scene 7</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="scene-container-wrapper">
+          <div class="scene-label-bar">Scene text · drag to highlight</div>
+          <div id="sceneText" class="scene-container">
+            <!-- full scene text from backend will appear here -->
+          </div>
+        </div>
+
+        <div class="helper">
+          Highlight a span of the scene above (click + drag).
+          If nothing is highlighted, the entire scene will be analyzed by the model.
+        </div>
+
+        <div class="button-row">
+          <button class="secondary" id="reloadBtn" type="button">
+            ⟳ Reload scene text
+          </button>
+          <button id="analyzeBtn" type="button">
+            ✶ Analyze highlighted / full scene
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT: output -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">2 · Madness score & linguistic features</div>
+          <span class="badge">Output</span>
+        </div>
+
+        <div class="results-score" id="scoreDisplay">– –</div>
+        <div class="score-label">
+          0 = psychologically stable · 100 = extremely disturbed / unmoored
+        </div>
+        <div class="score-comment" id="scoreComment">
+          Choose an act & scene, highlight a passage, then run the model.
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-name">Semantic disorganization</div>
+            <div class="feature-value" id="f1Value">–</div>
+            <div class="feature-caption">
+              How much the passage jumps between ideas or images (higher = more fractured).
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-name">Word-graph randomness</div>
+            <div class="feature-value" id="f2Value">–</div>
+            <div class="feature-caption">
+              How tangled the flow of words and associations feels (higher = more chaotic).
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-name">Lexical weirdness</div>
+            <div class="feature-value" id="f3Value">–</div>
+            <div class="feature-caption">
+              How unusual the diction is, including pronouns, vocatives, and punctuation.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSceneRawText = ""; // store raw scene text so we always have a clean version
+    
+    // Map of ALL CAPS character names to CSS classes
+    const NAME_CLASS_MAP = {
+    "LEAR": "char-lear",
+    "CORDELIA": "char-cordelia",
+    "GONERIL": "char-goneril",
+    "REGAN": "char-regan",
+    "KENT": "char-kent",
+    "GLOUCESTER": "char-gloucester",
+    "EDGAR": "char-edgar",
+    "EDMUND": "char-edmund",
+    "FOOL": "char-fool",
+    "ALBANY": "char-albany",
+    "CORNWALL": "char-cornwall",
+    "OSWALD": "char-oswald",
+    "FRANCE": "char-france",
+    "BURGUNDY": "char-burgundy"
+    };
+
+    // Regex to match ONLY all-caps versions of those names
+    const NAME_REGEX = new RegExp(
+    "\\b(" + Object.keys(NAME_CLASS_MAP).join("|") + ")\\b",
+    "g" // NOT case-insensitive – only ALL CAPS
+    );
+
+    function escapeHtml(str) {
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function renderScene(text) {
+    currentSceneRawText = text || "";
+    
+    const lines = currentSceneRawText.split(/\r?\n/);
+        
+    const htmlLines = lines.map((line) => {
+        let escaped = escapeHtml(line);
+
+        // Highlight ALL CAPS character names
+        escaped = escaped.replace(NAME_REGEX, (match) => {
+        const cls = NAME_CLASS_MAP[match] || "";
+        if (!cls) return match;
+        return `<span class="${cls}">${match}</span>`;
+        });
+
+        const display = escaped.trim().length ? escaped : "&nbsp;";
+        return `<div class="scene-line">${display}</div>`;
+    });
+
+    sceneTextDiv.innerHTML = htmlLines.join("");
+    }
+
+
+
+    const actSelect = document.getElementById("actSelect");
+    const sceneSelect = document.getElementById("sceneSelect");
+    const sceneTextDiv = document.getElementById("sceneText");
+    const reloadBtn = document.getElementById("reloadBtn");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const scoreComment = document.getElementById("scoreComment");
+    const f1Value = document.getElementById("f1Value");
+    const f2Value = document.getElementById("f2Value");
+    const f3Value = document.getElementById("f3Value");
+
+    async function loadScene() {
+    const act = actSelect.value;
+    const scene = sceneSelect.value;
+    sceneTextDiv.textContent = "Loading scene text…";
+    try {
+        const res = await fetch(`/api/scene?act=${encodeURIComponent(act)}&scene=${encodeURIComponent(scene)}`);
+        const data = await res.json();
+        if (!res.ok || data.error) {
+        sceneTextDiv.textContent = data.error || "Failed to load scene.";
+        } else {
+        renderScene(data.text);  // 👈 important
+        }
+    } catch (e) {
+        console.error(e);
+        sceneTextDiv.textContent = "Error loading scene.";
+    }
+    }
+
+
+
+    function getSelectedSceneText() {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return "";
+    const range = selection.getRangeAt(0);
+    // Ensure the selection is inside the sceneTextDiv
+    let container = range.commonAncestorContainer;
+    while (container && container !== sceneTextDiv) {
+        container = container.parentNode;
+    }
+    if (container !== sceneTextDiv) {
+        return "";
+    }
+    return selection.toString().trim();
+    }
+
+
+    async function analyzeWithModel(passage) {
+      const act = actSelect.value;
+      const scene = sceneSelect.value;
+
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: passage,
+          act,
+          scene
+        })
+      });
+      if (!res.ok) {
+        throw new Error("API error");
+      }
+      return await res.json();
+    }
+
+    reloadBtn.addEventListener("click", () => {
+      loadScene();
+    });
+
+    actSelect.addEventListener("change", loadScene);
+    sceneSelect.addEventListener("change", loadScene);
+
+    analyzeBtn.addEventListener("click", async () => {
+      let selected = getSelectedSceneText();
+      if (!selected) {
+        selected = sceneTextDiv.textContent.trim();
+      }
+      if (!selected) {
+        alert("No scene text loaded yet.");
+        return;
+      }
+
+      scoreDisplay.textContent = "…";
+      scoreComment.textContent = "Running linguistic model on your selection…";
+      f1Value.textContent = "…";
+      f2Value.textContent = "…";
+      f3Value.textContent = "…";
+
+      try {
+        const data = await analyzeWithModel(selected);
+        if (data.error) {
+          scoreDisplay.textContent = "Error";
+          scoreComment.textContent = data.error;
+          return;
+        }
+        const score = data.madness_score;
+        scoreDisplay.textContent = score.toFixed(1);
+        scoreComment.textContent = data.comment || "";
+
+        f1Value.textContent = data.semantic_disorganization.toFixed(3);
+        f2Value.textContent = data.graph_randomness.toFixed(3);
+        f3Value.textContent = data.lexical_weirdness.toFixed(3);
+      } catch (e) {
+        console.error(e);
+        scoreDisplay.textContent = "Error";
+        scoreComment.textContent = "Analysis failed. Check the backend server.";
+      }
+    });
+
+    // initial load: Act 3 Scene 4 by default
+    loadScene();
+  </script>
+</body>
+</html>

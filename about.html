@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lear Linguistic Model (LLM) · About</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --accent: #38bdf8;
+      --accent-pink: #fb7185;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.18) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(248, 113, 113, 0.16) 0, transparent 55%),
+        #020617;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 900px;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.95) 0, #020617 55%);
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      padding: 22px 22px 24px;
+      box-shadow:
+        0 22px 55px rgba(15, 23, 42, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.7);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.14) 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(248, 113, 113, 0.14) 0, transparent 55%);
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .nav-left {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.65);
+      color: var(--text-main);
+    }
+
+    .nav-links a.active {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.8);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .glow-title {
+      font-size: clamp(2rem, 4.4vw, 2.6rem);
+      line-height: 1.05;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #38bdf8, #fb7185, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 18px rgba(56, 189, 248, 0.55),
+        0 0 30px rgba(15, 23, 42, 0.9);
+      margin-bottom: 4px;
+    }
+
+    .glow-subtitle-tag {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(148, 163, 184, 0.9);
+      margin-top: 2px;
+      margin-bottom: 6px;
+    }
+
+    .lead {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin-bottom: 14px;
+    }
+
+    .lead b {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 18px;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      padding: 12px 12px 14px;
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.9);
+    }
+
+    .card h2 {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(148, 163, 184, 0.95);
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .feature-block {
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed rgba(51, 65, 85, 0.7);
+    }
+
+    .feature-block:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .feature-block h3 {
+      font-size: 0.86rem;
+      margin-bottom: 3px;
+      color: var(--accent);
+    }
+
+    .feature-block p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .credits-list {
+      list-style: none;
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+
+    .credits-list li + li {
+      margin-top: 3px;
+    }
+
+    .credits-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(148, 163, 184, 0.95);
+      margin-bottom: 5px;
+    }
+
+    .footnote {
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <nav class="nav">
+      <div class="nav-links">
+        <a href="index.html">Analyzer</a>
+        <a href="about.html" class="active">About</a>
+      </div>
+    </nav>
+
+    <div class="glow-subtitle-tag">computational stylistics for king lear</div>
+    <h1 class="glow-title">Lear Linguistic Model (LLM)</h1>
+
+    <p class="lead">
+      The <b>Lear Linguistic Model (LLM)</b> is a computational stylistics project
+      that estimates how “mad” a passage from <i>King Lear</i> feels. It combines
+      several linguistically motivated features into a single <b>Madness Score</b>
+      between 0 and 100, then reports how that score is distributed across three
+      stylistic dimensions.
+    </p>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Core linguistic dimensions</h2>
+
+        <div class="feature-block">
+          <h3>Semantic disorganization</h3>
+          <p>
+            Captures how much the passage jumps between ideas, images, or arguments.
+            Higher values suggest weaker logical progression, abrupt topic shifts, or
+            collisions of imagery that make the speaker sound mentally fragmented or
+            unstable in their thinking.
+          </p>
+        </div>
+
+        <div class="feature-block">
+          <h3>Word-graph randomness</h3>
+          <p>
+            Treats the sequence of words and clauses as a simple graph of connections.
+            Higher values indicate a more tangled flow of language – looping back,
+            piling on clauses, and making sudden transitions – which feels chaotic
+            rather than linear and controlled.
+          </p>
+        </div>
+
+        <div class="feature-block">
+          <h3>Lexical weirdness</h3>
+          <p>
+            Describes how unusual the diction is, especially in pronouns, vocatives,
+            and punctuation. Higher values reflect intense questions or exclamations,
+            strange address (“thou”, “slave”, “fiend”), and emotionally charged wording
+            that pushes the speech toward theatrical or unstable territory.
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Project contributors</h2>
+        <p>
+          The Lear Linguistic Model is a collaborative exploration at the intersection
+          of literature, linguistics, and computation, designed specifically for
+          close reading of <i>King Lear</i>.
+        </p>
+        <div class="credits-label">Contributors:</div>
+        <ul class="credits-list">
+          <li>Aldric Benalan</li>
+          <li>Lucas Horowitz-Kurtzberg</li>
+          <li>John Bridgeford</li>
+          <li>Bharat Bhati</li>
+          <li>Sagar Deshpande</li>
+        </ul>
+
+        <p class="footnote">
+          The live analyzer uses these dimensions to estimate a Madness Score for any
+          selected passage, and can visualize line- or chunk-level intensity as a
+          heatmap across the scene.
+        </p>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
