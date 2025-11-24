@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lear Linguistic Model (LLM) · Custom Text</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --accent: #38bdf8;
+      --accent-pink: #fb7185;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.18) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(248, 113, 113, 0.16) 0, transparent 55%),
+        #020617;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1120px;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.95) 0, #020617 55%);
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      padding: 22px 22px 24px;
+      box-shadow:
+        0 22px 55px rgba(15, 23, 42, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.7);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.14) 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(248, 113, 113, 0.14) 0, transparent 55%);
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Nav bar reused across pages */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .nav-left {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.65);
+      color: var(--text-main);
+    }
+
+    .nav-links a.active {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.8);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .glow-subtitle-tag {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(148, 163, 184, 0.9);
+      margin-top: 2px;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .glow-title {
+      font-size: clamp(2rem, 4.4vw, 2.6rem);
+      line-height: 1.05;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #38bdf8, #fb7185, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 18px rgba(56, 189, 248, 0.55),
+        0 0 30px rgba(15, 23, 42, 0.9);
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto 10px auto;
+      text-align: center;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 880px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 18px;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      padding: 14px 14px 16px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.9);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--text-muted);
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 260px;
+      resize: vertical;
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      padding: 10px 11px;
+      line-height: 1.4;
+      font-family: "Iowan Old Style", "Georgia", "Times New Roman", serif;
+    }
+
+    textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.9);
+      border-color: rgba(56, 189, 248, 0.9);
+    }
+
+    .helper {
+      margin-top: 5px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .button-row {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      background:
+        radial-gradient(circle at 0 0, #38bdf8 0, #0ea5e9 55%, #0369a1 100%);
+      color: #0b1120;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(8, 47, 73, 0.85);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+      box-shadow: 0 18px 40px rgba(8, 47, 73, 0.95);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 22px rgba(8, 47, 73, 0.75);
+    }
+
+    .results-score {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.05em;
+    }
+
+    .score-label {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .score-comment {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .feature-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .feature-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), #020617);
+      border-radius: 14px;
+      border: 1px solid rgba(30, 64, 175, 0.9);
+      padding: 8px 10px 9px;
+    }
+
+    .feature-name {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .feature-value {
+      font-size: 1.06rem;
+      font-weight: 600;
+    }
+
+    .feature-caption {
+      margin-top: 4px;
+      font-size: 0.74rem;
+      color: rgba(156, 163, 175, 0.9);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <nav class="nav">
+      <div class="nav-links">
+        <a href="index.html">Analyzer</a>
+        <a href="custom.html" class="active">Custom Text</a>
+        <a href="about.html">About</a>
+      </div>
+    </nav>
+
+    <div class="glow-subtitle-tag">free-text mode</div>
+    <h1 class="glow-title">Lear Linguistic Model (LLM)</h1>
+    <p class="subtitle">
+      Paste any passage here — from <i>King Lear</i>, your own imitation, or another text —
+      and the Lear Linguistic Model will estimate its Madness Score and stylistic profile.
+    </p>
+
+    <div class="layout">
+      <!-- Left: input -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">1 · Paste or write your passage</div>
+          <span class="badge">Input</span>
+        </div>
+
+        <label for="inputText">Text</label>
+        <textarea id="inputText" placeholder="Paste or write text here..."></textarea>
+        <div class="helper">
+          The model is tuned for Shakespearean drama, but you can try anything — including
+          your own 'mad' monologues.
+        </div>
+
+        <div class="button-row">
+          <button id="analyzeBtn" type="button">
+            ✶ Analyze this passage
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: output -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">2 · Madness score & features</div>
+          <span class="badge">Output</span>
+        </div>
+
+        <div class="results-score" id="scoreDisplay">– –</div>
+        <div class="score-label">
+          0 = psychologically stable · 100 = extremely disturbed / unmoored
+        </div>
+        <div class="score-comment" id="scoreComment">
+          Paste a passage on the left and run the model to see its profile.
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-name">Semantic disorganization</div>
+            <div class="feature-value" id="f1Value">–</div>
+            <div class="feature-caption">
+              How much the passage jumps between ideas or images (higher = more fractured).
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-name">Word-graph randomness</div>
+            <div class="feature-value" id="f2Value">–</div>
+            <div class="feature-caption">
+              How tangled the flow of words and associations feels (higher = more chaotic).
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-name">Lexical weirdness</div>
+            <div class="feature-value" id="f3Value">–</div>
+            <div class="feature-caption">
+              How unusual the diction is, including pronouns, vocatives, and punctuation.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const inputText = document.getElementById("inputText");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const scoreComment = document.getElementById("scoreComment");
+    const f1Value = document.getElementById("f1Value");
+    const f2Value = document.getElementById("f2Value");
+    const f3Value = document.getElementById("f3Value");
+
+    async function analyzeCustomText(passage) {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: passage
+          // act / scene omitted on purpose for custom text
+        })
+      });
+      if (!res.ok) {
+        throw new Error("API error");
+      }
+      return await res.json();
+    }
+
+    analyzeBtn.addEventListener("click", async () => {
+      const passage = inputText.value.trim();
+      if (!passage) {
+        alert("Please paste or write some text first.");
+        return;
+      }
+
+      scoreDisplay.textContent = "…";
+      scoreComment.textContent = "Running the Lear Linguistic Model on your passage…";
+      f1Value.textContent = "…";
+      f2Value.textContent = "…";
+      f3Value.textContent = "…";
+
+      try {
+        const data = await analyzeCustomText(passage);
+        if (data.error) {
+          scoreDisplay.textContent = "Error";
+          scoreComment.textContent = data.error;
+          return;
+        }
+
+        const score = data.madness_score;
+        scoreDisplay.textContent = score.toFixed(1);
+        scoreComment.textContent = data.comment || "";
+
+        f1Value.textContent = data.semantic_disorganization.toFixed(3);
+        f2Value.textContent = data.graph_randomness.toFixed(3);
+        f3Value.textContent = data.lexical_weirdness.toFixed(3);
+      } catch (e) {
+        console.error(e);
+        scoreDisplay.textContent = "Error";
+        scoreComment.textContent = "Analysis failed. Check the backend.";
+      }
+    });
+  </script>
+</body>
+</html>
