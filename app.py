@@ -1,8 +1,10 @@
 import os
 import json
+import random   # 👈 add this
 from flask import Flask, request, jsonify, send_from_directory
 from dotenv import load_dotenv
 from openai import OpenAI
+
 
 # Load OPENAI_API_KEY from .env
 load_dotenv()
@@ -103,6 +105,33 @@ Return ONLY a JSON object with these keys:
 
     content = completion.choices[0].message.content
     data = json.loads(content)
+
+    # ---- tiny jitter so it still "mostly matches" GPT's intent ----
+
+    def jitter(value, amount, low, high, decimals):
+        """Add small uniform noise and clamp to [low, high]."""
+        try:
+            x = float(value)
+        except (TypeError, ValueError):
+            return value  # if something weird, just leave it
+
+        x += random.uniform(-amount, amount)
+        x = max(low, min(high, x))
+        return round(x, decimals)
+
+    # madness_score: 0–100, tiny ±2.5 jitter, 1 decimal
+    if "madness_score" in data:
+        data["madness_score"] = jitter(
+            data["madness_score"], amount=2.5, low=0.0, high=100.0, decimals=1
+        )
+
+    # sub-scores: 0–1, very tiny ±0.05 jitter, 3 decimals
+    for key in ["semantic_disorganization", "graph_randomness", "lexical_weirdness"]:
+        if key in data:
+            data[key] = jitter(
+                data[key], amount=0.05, low=0.0, high=1.0, decimals=3
+            )
+
     return data
 
 
